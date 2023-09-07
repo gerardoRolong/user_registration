@@ -15,5 +15,5 @@ class User < ApplicationRecord
   has_one :address
   enum gender: {male: 'hombre', female:'mujer', other:'otro'}
   
-  validates_inclusion_of :gender, in [:male, :female, :other]
+  validates_inclusion_of :gender, in: [:male, :female, :other]
 end

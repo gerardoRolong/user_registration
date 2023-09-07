@@ -12,31 +12,123 @@
   <% end %>
 
   <div>
-    <%= form.label :gender, style: "display: block" %>
+    <%= form.label :gender, "género", style: "display: inline" %>
     <%= form.text_field :gender %>
   </div>
 
   <div>
-    <%= form.label :birth_date, style: "display: block" %>
+    <%= form.label :birth_date, "fecha de nacimineto", style: "display: inline" %>
     <%= form.date_field :birth_date %>
   </div>
 
   <div>
-    <%= form.label :first_name, style: "display: block" %>
+    <%= form.label :first_name, "primer nombre", style: "display: inline" %>
     <%= form.text_field :first_name %>
   </div>
 
   <div>
-    <%= form.label :last_name, style: "display: block" %>
+    <%= form.label :last_name, "apellido", style: "display: inline" %>
     <%= form.text_field :last_name %>
+  </div>
+  
+  <div>
+    <%= form.label :email, style: "display: inline" %>
+    <%= form.text_field :email %>
+  </div>
+  
+  <div>
+    <%= form.label :street, "dirección", style: "display: inline" %>
+    <%= form.text_field :street_info %>
   </div>
 
   <div>
-    <%= form.label :email, style: "display: block" %>
-    <%= form.text_field :email %>
+    <%= form.label :house_number, "casa/apartamento", style: "display: inline" %>
+    <%= form.text_field :house_number %>
   </div>
+
+  <%= form.fields_for :address do |tag_form| %>
+    <div>
+      <%= tag_form.label :country_id, "país", style: "display: inline" %>
+      <%= tag_form.collection_select :country_id, Country.all, :id, :name, {prompt: "Select a country"}, {class: 'form-select'} %>
+    </div>
+    
+    <div>
+      <%= tag_form.label :department_id, "departamento", style: "display: inline" %>
+      <%= tag_form.collection_select :department_id, [], :id, :name, {prompt: "Select a department"}, {class: 'form-select'} %>
+    </div>
+    
+    <div>
+      <%= tag_form.label :city_id, "ciudad", style: "display: inline" %>
+      <%= tag_form.collection_select :city_id, [], :id, :name, {prompt: "Select a city"}, {class: 'form-select'} %>
+    </div>
+    
+    <div>
+      <%= tag_form.label :description, "descripción", style: "display: inline" %>
+      <%= tag_form.text_field :description%>
+    </div>
+  <% end %>
 
   <div>
     <%= form.submit %>
   </div>
 <% end %>
+
+
+
+<script>
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const countrySelect = document.getElementById('user_address_country_id');
+    const departmentSelect = document.getElementById('user_address_department_id');
+    const citySelect = document.getElementById('user_address_city_id');
+    const departmentText = '<option value="">Select a department</option>';
+    const cityText = '<option value="">Select a city</option>';
+
+  // Event listener for the Country select
+  countrySelect.addEventListener('change', function() {
+    const selectedCountryId = this.value;
+    
+    // Clear the State and City select fields
+    departmentSelect.innerHTML = departmentText
+    citySelect.innerHTML = cityText
+
+    // Fetch States based on country
+    if (selectedCountryId) {
+      fetch(`/departments?country_id=${selectedCountryId}`)
+        .then(response => response.json())
+        .then(data => {
+          data.forEach(state => {
+            const option = document.createElement('option');
+            option.value = state.id;
+            option.text = state.name;
+            departmentSelect.appendChild(option);
+          });
+        })
+        .catch(error => console.error('Error:', error));
+    }
+  });
+
+  // Event listener for the State select
+  departmentSelect.addEventListener('change', function() {
+    const selectDepartment = this.value;
+
+    // Clear the City select field
+    citySelect.innerHTML = cityText
+
+    // Fetch Cities based on the selected department
+    if (selectDepartment) {
+      fetch(`/cities?department_id=${selectDepartment}`)
+        .then(response => response.json())
+        .then(data => {
+          data.forEach(city => {
+            const option = document.createElement('option');
+            option.value = city.id;
+            option.text = city.name;
+            citySelect.appendChild(option);
+          });
+        })
+        .catch(error => console.error('Error:', error));
+    }
+  });
+});
+</script>
