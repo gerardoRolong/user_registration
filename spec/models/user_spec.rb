@@ -3,13 +3,17 @@
 # Table name: users
 #
 #  id         :integer          not null, primary key
-#  birth_date :date
-#  email      :string
-#  first_name :string
-#  gender     :string
-#  last_name  :string
+#  birth_date :date             not null
+#  email      :string(30)       not null
+#  first_name :string(30)       not null
+#  gender     :string           not null
+#  last_name  :string(30)       not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#
+# Indexes
+#
+#  index_users_on_email  (email) UNIQUE
 #
 require 'rails_helper'
 

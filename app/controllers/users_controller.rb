@@ -4,6 +4,8 @@ class UsersController < ApplicationController
   # GET /users or /users.json
   def index
     @users = User.all
+    @city_counts = city_counts
+    p city_counts
   end
 
   # GET /users/1 or /users/1.json
@@ -13,6 +15,7 @@ class UsersController < ApplicationController
   # GET /users/new
   def new
     @user = User.new
+    @user.build_address unless @user.address
   end
 
   # GET /users/1/edit
@@ -52,7 +55,7 @@ class UsersController < ApplicationController
     @user.destroy
 
     respond_to do |format|
-      format.html { redirect_to users_url, notice: "User was successfully destroyed." }
+      format.html { redirect_to users_url, notice: "Usuario eliminado." }
       format.json { head :no_content }
     end
   end
@@ -65,6 +68,11 @@ class UsersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:gender, :birth_date, :first_name, :last_name, :email)
+      params.require(:user).permit(:gender, :birth_date, :first_name, :last_name, :email, 
+          {address_attributes: [:street_info, :house_number, :city_id, :description]})
+    end
+    
+    def city_counts
+      counts_by_city = User.joins(address: :city).group(:name).count
     end
 end

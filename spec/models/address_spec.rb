@@ -3,6 +3,7 @@
 # Table name: addresses
 #
 #  id           :integer          not null, primary key
+#  description  :string(30)       not null
 #  house_number :string
 #  street_info  :string
 #  created_at   :datetime         not null

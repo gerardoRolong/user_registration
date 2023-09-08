@@ -1,11 +1,11 @@
-<%= form_with(model: user) do |form| %>
+<%= form_with model: @user, data: {turbo: false} do |form| %>
   <% if user.errors.any? %>
     <div style="color: red">
-      <h2><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h2>
+      <h2><%= user.errors.count%> errores en la información ingresada:</h2>
 
       <ul>
-        <% user.errors.each do |error| %>
-          <li><%= error.full_message %></li>
+        <% user.errors.messages.each do |error| %>
+          <li><%= error[1] %></li>
         <% end %>
       </ul>
     </div>
@@ -13,11 +13,11 @@
 
   <div>
     <%= form.label :gender, "género", style: "display: inline" %>
-    <%= form.text_field :gender %>
+    <%= form.select :gender, User.genders.map { |key, value| [value, key] } %>
   </div>
 
   <div>
-    <%= form.label :birth_date, "fecha de nacimineto", style: "display: inline" %>
+    <%= form.label :birth_date, "fecha de nacimiento", style: "display: inline" %>
     <%= form.date_field :birth_date %>
   </div>
 
@@ -35,36 +35,37 @@
     <%= form.label :email, style: "display: inline" %>
     <%= form.text_field :email %>
   </div>
-  
-  <div>
-    <%= form.label :street, "dirección", style: "display: inline" %>
-    <%= form.text_field :street_info %>
-  </div>
 
-  <div>
-    <%= form.label :house_number, "casa/apartamento", style: "display: inline" %>
-    <%= form.text_field :house_number %>
-  </div>
+  <%= form.fields_for :address do |add_form| %>
+ 
+    <div>
+      <%= add_form.label :street, "dirección", style: "display: inline" %>
+      <%= add_form.text_field :street_info %>
+    </div>
 
-  <%= form.fields_for :address do |tag_form| %>
     <div>
-      <%= tag_form.label :country_id, "país", style: "display: inline" %>
-      <%= tag_form.collection_select :country_id, Country.all, :id, :name, {prompt: "Select a country"}, {class: 'form-select'} %>
+      <%= add_form.label :house_number, "casa/apartamento", style: "display: inline" %>
+      <%= add_form.text_field :house_number %>
+    </div>
+
+    <div>
+      <%= form.label :country_id, "país", style: "display: inline" %>
+      <%= form.collection_select :country_id, Country.all, :id, :name, {prompt: "Seleccione un país"}, {class: 'form-select'} %>
     </div>
     
     <div>
-      <%= tag_form.label :department_id, "departamento", style: "display: inline" %>
-      <%= tag_form.collection_select :department_id, [], :id, :name, {prompt: "Select a department"}, {class: 'form-select'} %>
+      <%= form.label :department_id, "departamento", style: "display: inline" %>
+      <%= form.collection_select :department_id, [], :id, :name, {prompt: "Seleccione un departamento"}, {class: 'form-select'} %>
     </div>
     
     <div>
-      <%= tag_form.label :city_id, "ciudad", style: "display: inline" %>
-      <%= tag_form.collection_select :city_id, [], :id, :name, {prompt: "Select a city"}, {class: 'form-select'} %>
+      <%= add_form.label :city_id, "ciudad", style: "display: inline" %>
+      <%= add_form.collection_select :city_id, [], :id, :name, {prompt: "Seleccione una ciudad"}, {class: 'form-select'} %>
     </div>
     
     <div>
-      <%= tag_form.label :description, "descripción", style: "display: inline" %>
-      <%= tag_form.text_field :description%>
+      <%= add_form.label :description, "descripción", style: "display: inline" %>
+      <%= add_form.text_field :description%>
     </div>
   <% end %>
 
@@ -77,12 +78,11 @@
 
 <script>
 
-  document.addEventListener('DOMContentLoaded', function() {
-    const countrySelect = document.getElementById('user_address_country_id');
-    const departmentSelect = document.getElementById('user_address_department_id');
-    const citySelect = document.getElementById('user_address_city_id');
-    const departmentText = '<option value="">Select a department</option>';
-    const cityText = '<option value="">Select a city</option>';
+  var countrySelect = document.getElementById('user_country_id');
+  var departmentSelect = document.getElementById('user_department_id');
+  var citySelect = document.getElementById('user_address_attributes_city_id');
+  var departmentText = '<option value="">Seleccione un departamentot</option>';
+  var cityText = '<option value="">Selecione una ciudad</option>';
 
   // Event listener for the Country select
   countrySelect.addEventListener('change', function() {
@@ -102,6 +102,7 @@
             option.value = state.id;
             option.text = state.name;
             departmentSelect.appendChild(option);
+            // console.log("change")
           });
         })
         .catch(error => console.error('Error:', error));
@@ -129,6 +130,6 @@
         })
         .catch(error => console.error('Error:', error));
     }
-  });
-});
+  });  
+
 </script>

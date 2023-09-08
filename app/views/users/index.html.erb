@@ -1,14 +1,48 @@
 <p style="color: green"><%= notice %></p>
 
-<h1>Users</h1>
-
-<div id="users">
-  <% @users.each do |user| %>
-    <%= render user %>
-    <p>
-      <%= link_to "Show this user", user %>
-    </p>
+<div id="conteos" style="border: solid">
+  <h1>Conteos por ciudad</h1>
+  <% @city_counts.each do |(city, count)| %>
+    <h2><%= city%> <%=count%></h2>
   <% end %>
 </div>
 
-<%= link_to "New user", new_user_path %>
+
+<h1>Usuarios</h1>
+
+<div id="users">
+  <table>
+    <tr>
+      <th>nombre</th>
+      <th>apellido</th>
+      <th>correo</th>
+      <th>género</th>
+      <th>fecha de nacimiento</th>
+      <th>dirección</th>
+      <th>casa/apartamento</th>
+      <th>descripción</th>
+      <th>ciudad</th>
+      <th>departamento</th>
+      <th>país</th>
+      <th>ver usuario</th>
+    </tr>
+    <% @users.each do |user| %>
+      <tr>
+        <th><%= user.first_name%></th>
+        <th><%= user.last_name%></th>
+        <th><%= user.email%></th>
+        <th><%= user.gender%></th>
+        <th><%= user.birth_date%></th>
+        <th><%= user.address.street_info%></th>
+        <th><%= user.address.description%></th>
+        <th><%= user.address.house_number%></th>
+        <th><%= user.address.city.name%></th>
+        <th><%= user.address.city.department.name%></th>
+        <th><%= user.address.city.department.country.name%></th>
+        <th><%= link_to "detalle", user %></th>
+      </tr>
+    <% end %>
+  </table>
+</div>
+
+<%= link_to "Crear usuario", new_user_path %>
