@@ -5,4 +5,4 @@ bundle install
 rails db:load  
 rails seed  
 rails server  
-navigate to https://localhost:8080
+navigate to https://localhost:3000
